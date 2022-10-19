@@ -24,7 +24,7 @@ import (
 	"k8s.io/code-generator/pkg/util"
 	"k8s.io/klog/v2"
 
-	generatorargs "k8s.io/code-generator/cmd/informer-gen/args"
+	generatorargs "github.com/colin404/code-generator/cmd/informer-gen/args"
 )
 
 func main() {
