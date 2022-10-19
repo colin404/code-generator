@@ -1,6 +1,6 @@
 // This is a generated file. Do not edit directly.
 
-module k8s.io/code-generator
+module github.com/colin404/code-generator
 
 go 1.19
 
