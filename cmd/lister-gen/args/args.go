@@ -20,6 +20,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/pflag"
+	clientgenargs "k8s.io/code-generator/cmd/client-gen/args"
+	"k8s.io/code-generator/cmd/client-gen/types"
 )
 
 // Args is used by the gengo framework to pass args specific to this generator.
@@ -31,6 +33,9 @@ type Args struct {
 	// PluralExceptions specify list of exceptions used when pluralizing certain types.
 	// For example 'Endpoints:Endpoints', otherwise the pluralizer will generate 'Endpointes'.
 	PluralExceptions []string
+
+	// Overrides for which types should be included in the informer.
+	IncludedTypesOverrides map[types.GroupVersion][]string
 }
 
 // New returns default arguments for the generator.
@@ -48,6 +53,7 @@ func (args *Args) AddFlags(fs *pflag.FlagSet) {
 		"list of comma separated plural exception definitions in Type:PluralizedType format")
 	fs.StringVar(&args.GoHeaderFile, "go-header-file", "",
 		"the path to a file containing boilerplate header text; the string \"YEAR\" will be replaced with the current 4-digit year")
+	pflag.Var(clientgenargs.NewGVTypesValue(&args.IncludedTypesOverrides, []string{}), "included-types-overrides", "list of group/version/type for which lister should be generated. By default, lister is generated for all types which have genclient in types.go. This overrides that. For each groupVersion in this list, only the types mentioned here will be included. The default check of genclient will be used for other group versions.")
 }
 
 // Validate checks the given arguments.
