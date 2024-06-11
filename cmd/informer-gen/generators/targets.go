@@ -155,11 +155,27 @@ func GetTargets(context *generator.Context, args *args.Args) []generator.Target 
 			groupGoNames[groupPackageName] = namer.IC(override[0])
 		}
 
+		includedTypesOverrides := args.IncludedTypesOverrides
 		var typesToGenerate []*types.Type
-		for _, t := range p.Types {
-			tags := util.MustParseClientGenTags(append(t.SecondClosestCommentLines, t.CommentLines...))
-			if !tags.GenerateClient || tags.NoVerbs || !tags.HasVerb("list") || !tags.HasVerb("watch") {
-				continue
+		for n, t := range p.Types {
+			// filter out types which are not included in user specified overrides.
+			typesOverride, ok := includedTypesOverrides[gv]
+			if ok {
+				found := false
+				for _, typeStr := range typesOverride {
+					if typeStr == n {
+						found = true
+						break
+					}
+				}
+				if !found {
+					continue
+				}
+			} else {
+				tags := util.MustParseClientGenTags(append(t.SecondClosestCommentLines, t.CommentLines...))
+				if !tags.GenerateClient || tags.NoVerbs || !tags.HasVerb("list") || !tags.HasVerb("watch") {
+					continue
+				}
 			}
 
 			typesToGenerate = append(typesToGenerate, t)
